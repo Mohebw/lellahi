@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ink-950 text-white antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(252, 207, 4, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(252, 207, 4, 0.05), transparent);
+  }
+  ::selection {
+    background: rgba(252, 207, 4, 0.3);
+  }
+  :focus-visible {
+    outline: 2px solid #fccf04;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-glass backdrop-blur-xl border border-line rounded-2xl shadow-glass;
+  }
+  .glass-panel-hover {
+    @apply transition-all duration-300 hover:border-mustard-400/30 hover:shadow-glow-mustard hover:-translate-y-1;
+  }
+  .container-lellahi {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-mustard-400 px-5 py-2.5 font-semibold text-ink-950 transition-colors duration-200 hover:bg-mustard-300 hover:shadow-glow-mustard active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-line bg-white/5 px-5 py-2.5 font-medium text-white backdrop-blur-md transition-colors duration-200 hover:bg-white/10 hover:border-white/20 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
