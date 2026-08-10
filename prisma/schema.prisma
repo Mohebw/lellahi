@@ -85,6 +85,44 @@ enum PurchaseRequestStatus {
   CANCELLED
 }
 
+model UsedPhoneModel {
+  id         String   @id @default(cuid())
+  brand      String
+  name       String
+  basePrice  Int
+  isActive   Boolean  @default(true)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum UsedPhoneFactorCategory {
+  HARDWARE
+  SOFTWARE
+  ACCESSORY
+}
+
+model UsedPhoneFactorOption {
+  id          String                   @id @default(cuid())
+  groupKey    String
+  optionKey   String
+  groupLabel  String
+  optionLabel String
+  category    UsedPhoneFactorCategory
+  percent     Float
+  isDefault   Boolean                  @default(false)
+  order       Int                      @default(0)
+
+  @@unique([groupKey, optionKey])
+  @@index([groupKey])
+}
+
+model UsedPhoneBatterySetting {
+  id                    String @id @default(cuid())
+  thresholdPercent      Int    @default(80)
+  percentPerPointBelow  Float  @default(0.5)
+}
+
 model PurchaseRequest {
   id            String                 @id @default(cuid())
   productId     String

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, ClipboardList, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Package, Tags, ClipboardList, LogOut, Menu, X, Smartphone } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,8 @@ const NAV = [
   { href: "/admin", label: "داشبورد", icon: LayoutDashboard, exact: true },
   { href: "/admin/products", label: "محصولات", icon: Package },
   { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: Tags },
-  { href: "/admin/requests", label: "درخواست‌های خرید", icon: ClipboardList }
+  { href: "/admin/requests", label: "درخواست‌های خرید", icon: ClipboardList },
+  { href: "/admin/used-phones", label: "قیمت گوشی دست‌دوم", icon: Smartphone }
 ];
 
 export function AdminShell({
