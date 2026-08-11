@@ -178,6 +178,26 @@ async function main() {
       ]
     },
     {
+      groupKey: "body_color",
+      groupLabel: "رنگ بدنه",
+      category: "HARDWARE",
+      options: [
+        { optionKey: "black", optionLabel: "مشکی / خاکستری فضایی", percent: 0, isDefault: true },
+        { optionKey: "white_silver", optionLabel: "سفید / نقره‌ای", percent: 0 },
+        { optionKey: "gold", optionLabel: "طلایی", percent: 0 },
+        { optionKey: "red", optionLabel: "قرمز", percent: 0 },
+        { optionKey: "blue", optionLabel: "آبی", percent: 0 },
+        { optionKey: "green", optionLabel: "سبز", percent: 0 },
+        { optionKey: "purple", optionLabel: "بنفش", percent: 0 },
+        { optionKey: "pink", optionLabel: "صورتی", percent: 0 },
+        { optionKey: "yellow", optionLabel: "زرد", percent: 0 },
+        { optionKey: "titanium_natural", optionLabel: "تیتانیوم طبیعی", percent: 0 },
+        { optionKey: "titanium_blue", optionLabel: "تیتانیوم آبی", percent: 0 },
+        { optionKey: "titanium_desert", optionLabel: "تیتانیوم صحرایی", percent: 0 },
+        { optionKey: "other_color", optionLabel: "سایر رنگ‌ها", percent: 0 }
+      ]
+    },
+    {
       groupKey: "accessory_box",
       groupLabel: "جعبه اصلی",
       category: "ACCESSORY",
@@ -237,7 +257,80 @@ async function main() {
       });
     }
   }
-  console.log("✅ Used-phone price factors seeded (17 groups)");
+  console.log("✅ Used-phone price factors seeded (18 groups)");
+
+  // Full iPhone lineup, iPhone 6 through the current 17 series, by storage variant.
+  // basePrice is left at a placeholder (0) and isActive:false so nothing shows to
+  // customers until the real price is set from /admin/used-phones.
+  const iphoneLineup: { name: string; storages: string[] }[] = [
+    { name: "iPhone 6", storages: ["16GB", "64GB", "128GB"] },
+    { name: "iPhone 6 Plus", storages: ["16GB", "64GB", "128GB"] },
+    { name: "iPhone 6s", storages: ["16GB", "32GB", "64GB", "128GB"] },
+    { name: "iPhone 6s Plus", storages: ["16GB", "32GB", "64GB", "128GB"] },
+    { name: "iPhone SE (نسل ۱)", storages: ["16GB", "32GB", "64GB", "128GB"] },
+    { name: "iPhone 7", storages: ["32GB", "128GB", "256GB"] },
+    { name: "iPhone 7 Plus", storages: ["32GB", "128GB", "256GB"] },
+    { name: "iPhone 8", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 8 Plus", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone X", storages: ["64GB", "256GB"] },
+    { name: "iPhone XR", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone XS", storages: ["64GB", "256GB", "512GB"] },
+    { name: "iPhone XS Max", storages: ["64GB", "256GB", "512GB"] },
+    { name: "iPhone 11", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 11 Pro", storages: ["64GB", "256GB", "512GB"] },
+    { name: "iPhone 11 Pro Max", storages: ["64GB", "256GB", "512GB"] },
+    { name: "iPhone SE (نسل ۲ - 2020)", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 12 mini", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 12", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 12 Pro", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 12 Pro Max", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 13 mini", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 13", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 13 Pro", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone 13 Pro Max", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone SE (نسل ۳ - 2022)", storages: ["64GB", "128GB", "256GB"] },
+    { name: "iPhone 14", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 14 Plus", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 14 Pro", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone 14 Pro Max", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone 15", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 15 Plus", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 15 Pro", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone 15 Pro Max", storages: ["256GB", "512GB", "1TB"] },
+    { name: "iPhone 16e", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 16", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 16 Plus", storages: ["128GB", "256GB", "512GB"] },
+    { name: "iPhone 16 Pro", storages: ["128GB", "256GB", "512GB", "1TB"] },
+    { name: "iPhone 16 Pro Max", storages: ["256GB", "512GB", "1TB"] },
+    { name: "iPhone 17e", storages: ["256GB", "512GB"] },
+    { name: "iPhone 17", storages: ["256GB", "512GB"] },
+    { name: "iPhone Air", storages: ["256GB", "512GB", "1TB"] },
+    { name: "iPhone 17 Pro", storages: ["256GB", "512GB", "1TB", "2TB"] },
+    { name: "iPhone 17 Pro Max", storages: ["256GB", "512GB", "1TB", "2TB"] }
+  ];
+
+  let modelOrder = 0;
+  for (const phone of iphoneLineup) {
+    for (const storage of phone.storages) {
+      modelOrder += 1;
+      const fullName = `${phone.name} ${storage}`;
+      const existing = await prisma.usedPhoneModel.findFirst({
+        where: { brand: "اپل", name: fullName }
+      });
+      if (!existing) {
+        await prisma.usedPhoneModel.create({
+          data: {
+            brand: "اپل",
+            name: fullName,
+            basePrice: 0,
+            isActive: false, // hidden until a real price is set from the admin panel
+            order: modelOrder
+          }
+        });
+      }
+    }
+  }
+  console.log(`✅ ${modelOrder} iPhone models seeded (iPhone 6 → 17 series). Set real prices from /admin/used-phones, then activate each.`);
 }
 
 main()
