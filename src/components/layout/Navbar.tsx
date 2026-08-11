@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, Heart, Scale } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
@@ -71,6 +71,20 @@ export default function Navbar() {
             aria-label="جستجو"
           >
             <Search className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/wishlist"
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            aria-label="علاقه‌مندی‌ها"
+          >
+            <Heart className="h-5 w-5" />
+          </Link>
+          <Link
+            href="/compare"
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            aria-label="مقایسه محصولات"
+          >
+            <Scale className="h-5 w-5" />
           </Link>
         </div>
 

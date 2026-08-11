@@ -4,6 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Card";
 import { ProductGallery } from "@/components/products/ProductGallery";
 import { PurchaseCTA } from "@/components/products/PurchaseCTA";
+import { WishlistButton } from "@/components/products/WishlistButton";
+import { CompareButton } from "@/components/products/CompareButton";
+import { StockAlertForm } from "@/components/products/StockAlertForm";
+import { ReviewSection } from "@/components/products/ReviewSection";
+import { RelatedProducts } from "@/components/products/RelatedProducts";
 import { formatToman } from "@/lib/utils";
 
 export const revalidate = 60;
@@ -67,9 +72,15 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
         <ProductGallery images={product.images} alt={product.name} />
 
         <div>
-          <p className="mb-1 text-sm text-white/40">
-            {product.category.name} / {product.brand}
-          </p>
+          <div className="mb-1 flex items-center justify-between">
+            <p className="text-sm text-white/40">
+              {product.category.name} / {product.brand}
+            </p>
+            <div className="flex gap-2">
+              <WishlistButton productId={product.id} />
+              <CompareButton productId={product.id} />
+            </div>
+          </div>
           <h1 className="mb-3 text-2xl font-bold text-white sm:text-3xl">{product.name}</h1>
 
           <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -109,7 +120,11 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
             </div>
           )}
 
-          <PurchaseCTA productId={product.id} productName={product.name} outOfStock={product.stock <= 0} />
+          {product.stock > 0 ? (
+            <PurchaseCTA productId={product.id} productName={product.name} outOfStock={false} />
+          ) : (
+            <StockAlertForm productId={product.id} />
+          )}
 
           {Object.keys(specs).length > 0 && (
             <div className="glass-panel mt-8 divide-y divide-line p-0">
@@ -128,8 +143,12 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
               <p className="whitespace-pre-line leading-7 text-white/60">{product.description}</p>
             </div>
           )}
+
+          <ReviewSection productId={product.id} />
         </div>
       </div>
+
+      <RelatedProducts categoryId={product.categoryId} excludeId={product.id} />
     </div>
   );
 }

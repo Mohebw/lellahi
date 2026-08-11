@@ -26,6 +26,7 @@ export default function Footer() {
           <h4 className="mb-3 text-sm font-semibold text-white">دسترسی سریع</h4>
           <ul className="space-y-2 text-sm text-white/50">
             <li><Link href="/products" className="hover:text-mustard-400">همه محصولات</Link></li>
+            <li><Link href="/warranty" className="hover:text-mustard-400">گارانتی و مرجوعی</Link></li>
             <li><Link href="/about" className="hover:text-mustard-400">درباره ما</Link></li>
             <li><Link href="/contact" className="hover:text-mustard-400">تماس با ما</Link></li>
           </ul>

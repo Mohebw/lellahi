@@ -62,6 +62,8 @@ model Product {
   badge           ProductBadge      @default(NONE)
   images          ProductImage[]
   purchaseRequests PurchaseRequest[]
+  reviews         Review[]
+  stockAlerts     StockAlert[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -83,6 +85,30 @@ enum PurchaseRequestStatus {
   CONTACTED
   COMPLETED
   CANCELLED
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerName String
+  rating       Int
+  comment      String
+  isApproved   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([productId])
+}
+
+model StockAlert {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customerPhone String
+  notified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([productId])
 }
 
 model UsedPhoneModel {
