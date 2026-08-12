@@ -2,9 +2,9 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Truck, Headphones, BadgeCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/products/ProductCard";
-import { HeroVisual } from "@/components/layout/HeroVisual";
 import { CategoryIcon } from "@/components/products/CategoryIcon";
 import { MagneticLink } from "@/components/ui/MagneticLink";
+import { Logo3DShowcaseLoader } from "@/components/layout/Logo3DShowcaseLoader";
 
 export const revalidate = 60;
 
@@ -56,7 +56,7 @@ export default async function HomePage() {
               </MagneticLink>
             </div>
           </div>
-          <HeroVisual />
+          <Logo3DShowcaseLoader />
         </div>
       </section>
 
