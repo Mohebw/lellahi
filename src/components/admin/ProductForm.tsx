@@ -3,13 +3,38 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Plus, X, UploadCloud, Loader2 } from "lucide-react";
+import { Plus, X, UploadCloud, Loader2, Sparkles } from "lucide-react";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 
-type Category = { id: string; name: string };
+type Category = { id: string; name: string; slug: string };
+
+const PHONE_SPEC_TEMPLATE: Record<string, string> = {
+  "برند تراشه": "",
+  "رم": "",
+  "حافظه داخلی": "",
+  "اندازه صفحه نمایش": "",
+  "نوع و رزولوشن صفحه": "",
+  "دوربین اصلی": "",
+  "دوربین سلفی": "",
+  "ظرفیت باتری": "",
+  "شارژ سریع": "",
+  "وزن": "",
+  "مقاومت به آب و گردوغبار": ""
+};
+
+const SPEAKER_SPEC_TEMPLATE: Record<string, string> = {
+  "توان خروجی": "",
+  "نسخه بلوتوث": "",
+  "مدت‌زمان شارژدهی باتری": "",
+  "زمان شارژ کامل": "",
+  "مقاومت به آب": "",
+  "قابلیت اتصال چندگانه (Party Boost)": "",
+  "وزن": "",
+  "ابعاد": ""
+};
 
 export type ProductFormValues = {
   name: string;
@@ -104,6 +129,17 @@ export function ProductForm({
     set("specs", next);
   }
 
+  function applySpecTemplate() {
+    const category = categories.find((c) => c.id === values.categoryId);
+    if (!category) {
+      show("اول دسته‌بندی را انتخاب کنید", "error");
+      return;
+    }
+    const template = category.slug === "jbl" ? SPEAKER_SPEC_TEMPLATE : PHONE_SPEC_TEMPLATE;
+    // Keep any values already filled in; only add missing keys from the template
+    set("specs", { ...template, ...values.specs });
+  }
+
   function addColor() {
     if (!colorInput.trim()) return;
     set("colors", [...values.colors, colorInput.trim()]);
@@ -188,7 +224,13 @@ export function ProductForm({
         />
 
         <div>
-          <p className="mb-2 text-sm text-white/70">مشخصات فنی</p>
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-sm text-white/70">مشخصات فنی</p>
+            <Button type="button" variant="secondary" size="sm" onClick={applySpecTemplate}>
+              <Sparkles className="h-3.5 w-3.5" />
+              پر کردن مشخصات پیشنهادی
+            </Button>
+          </div>
           <div className="mb-2 flex gap-2">
             <Input placeholder="عنوان (مثلاً حافظه)" value={specKey} onChange={(e) => setSpecKey(e.target.value)} />
             <Input placeholder="مقدار (مثلاً 256GB)" value={specValue} onChange={(e) => setSpecValue(e.target.value)} />
@@ -199,8 +241,14 @@ export function ProductForm({
           {Object.entries(values.specs).length > 0 && (
             <div className="space-y-1.5">
               {Object.entries(values.specs).map(([k, v]) => (
-                <div key={k} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-sm">
-                  <span className="text-white/70">{k}: <span className="text-white">{v}</span></span>
+                <div key={k} className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 text-sm">
+                  <span className="w-44 shrink-0 text-white/60">{k}</span>
+                  <input
+                    value={v}
+                    onChange={(e) => set("specs", { ...values.specs, [k]: e.target.value })}
+                    placeholder="مقدار را وارد کنید"
+                    className="min-w-0 flex-1 bg-transparent text-white placeholder:text-white/25 focus:outline-none"
+                  />
                   <button type="button" onClick={() => removeSpec(k)} className="text-white/30 hover:text-red-400">
                     <X className="h-3.5 w-3.5" />
                   </button>

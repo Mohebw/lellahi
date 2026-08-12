@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/products?category=apple", label: "اپل" },
   { href: "/products?category=samsung", label: "سامسونگ" },
   { href: "/products?category=xiaomi", label: "شیائومی" },
+  { href: "/products?category=jbl", label: "JBL" },
   { href: "/used-phones", label: "قیمت گوشی دست‌دوم" },
   { href: "/about", label: "درباره ما" },
   { href: "/contact", label: "تماس با ما" }

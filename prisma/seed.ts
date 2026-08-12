@@ -26,7 +26,8 @@ async function main() {
     { name: "اپل", slug: "apple", icon: "🍎", order: 1 },
     { name: "سامسونگ", slug: "samsung", icon: "📱", order: 2 },
     { name: "شیائومی", slug: "xiaomi", icon: "⚡", order: 3 },
-    { name: "متفرقه", slug: "misc", icon: "🎧", order: 4 }
+    { name: "JBL", slug: "jbl", icon: "🔊", order: 4 },
+    { name: "متفرقه", slug: "misc", icon: "🎧", order: 5 }
   ];
 
   for (const cat of categories) {
@@ -36,7 +37,7 @@ async function main() {
       create: { ...cat, isActive: true }
     });
   }
-  console.log("✅ Default categories ensured (اپل / سامسونگ / شیائومی / متفرقه)");
+  console.log("✅ Default categories ensured (اپل / سامسونگ / شیائومی / JBL / متفرقه)");
 
   await prisma.usedPhoneBatterySetting.upsert({
     where: { id: "default" },
