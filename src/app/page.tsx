@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/products/ProductCard";
 import { CategoryIcon } from "@/components/products/CategoryIcon";
 import { MagneticLink } from "@/components/ui/MagneticLink";
-import { Logo3DShowcaseLoader } from "@/components/layout/Logo3DShowcaseLoader";
+import { HeroVisual } from "@/components/layout/HeroVisual";
 
 export const revalidate = 60;
 
@@ -56,7 +56,7 @@ export default async function HomePage() {
               </MagneticLink>
             </div>
           </div>
-          <Logo3DShowcaseLoader />
+          <HeroVisual />
         </div>
       </section>
 

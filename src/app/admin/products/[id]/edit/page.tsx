@@ -31,7 +31,8 @@ export default async function EditProductPage({ params }: { params: { id: string
           specs: (product.specs as Record<string, string>) || {},
           colors: product.colors,
           badge: product.badge,
-          images: product.images.map((i) => i.url)
+          images: product.images.map((i) => i.url),
+          videoUrl: product.videoUrl || ""
         }}
       />
     </AdminShell>

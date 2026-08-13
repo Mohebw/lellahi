@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
       slug,
       shortDescription: productData.shortDescription || null,
       description: productData.description || null,
+      videoUrl: productData.videoUrl || null,
       colors: productData.colors || [],
       images: images?.length
         ? { create: images.map((url, order) => ({ url, order })) }

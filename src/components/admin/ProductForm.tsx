@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Plus, X, UploadCloud, Loader2, Sparkles } from "lucide-react";
+import { Plus, X, UploadCloud, Loader2, Sparkles, Film } from "lucide-react";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
@@ -51,6 +51,7 @@ export type ProductFormValues = {
   colors: string[];
   badge: "NONE" | "NEW" | "FEATURED" | "DISCOUNT" | "OUT_OF_STOCK";
   images: string[];
+  videoUrl: string;
 };
 
 const EMPTY: ProductFormValues = {
@@ -67,7 +68,8 @@ const EMPTY: ProductFormValues = {
   specs: {},
   colors: [],
   badge: "NONE",
-  images: []
+  images: [],
+  videoUrl: ""
 };
 
 export function ProductForm({
@@ -85,7 +87,10 @@ export function ProductForm({
   const [specValue, setSpecValue] = useState("");
   const [colorInput, setColorInput] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [saving, setSaving] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/admin/categories")
@@ -103,16 +108,60 @@ export function ProductForm({
     try {
       const uploaded: string[] = [];
       for (const file of Array.from(files)) {
-        const formData = new FormData();
-        formData.append("file", file);
-        const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        if (res.ok) uploaded.push(data.url);
-        else show(data.error || "خطا در آپلود تصویر", "error");
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+          let data: { url?: string; error?: string } = {};
+          try {
+            data = await res.json();
+          } catch {
+            data = { error: "پاسخ نامعتبر از سرور — احتمالاً فضای دیسک سرور پر است" };
+          }
+          if (res.ok && data.url) {
+            uploaded.push(data.url);
+          } else {
+            show(data.error || `خطا در آپلود ${file.name}`, "error");
+          }
+        } catch {
+          show(`خطای شبکه هنگام آپلود ${file.name}`, "error");
+        }
       }
-      set("images", [...values.images, ...uploaded]);
+      if (uploaded.length > 0) {
+        set("images", [...values.images, ...uploaded]);
+      }
     } finally {
       setUploading(false);
+      // Reset so selecting the exact same file(s) again still triggers onChange
+      if (imageInputRef.current) imageInputRef.current.value = "";
+    }
+  }
+
+  async function handleVideoUpload(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setUploadingVideo(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/admin/upload-video", { method: "POST", body: formData });
+      let data: { url?: string; error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = { error: "پاسخ نامعتبر از سرور — احتمالاً فضای دیسک سرور پر است" };
+      }
+      if (res.ok && data.url) {
+        set("videoUrl", data.url);
+        show("ویدیو با موفقیت آپلود شد", "success");
+      } else {
+        show(data.error || "خطا در آپلود ویدیو", "error");
+      }
+    } catch {
+      show("خطای شبکه هنگام آپلود ویدیو", "error");
+    } finally {
+      setUploadingVideo(false);
+      if (videoInputRef.current) videoInputRef.current.value = "";
     }
   }
 
@@ -136,7 +185,6 @@ export function ProductForm({
       return;
     }
     const template = category.slug === "jbl" ? SPEAKER_SPEC_TEMPLATE : PHONE_SPEC_TEMPLATE;
-    // Keep any values already filled in; only add missing keys from the template
     set("specs", { ...template, ...values.specs });
   }
 
@@ -288,10 +336,12 @@ export function ProductForm({
             {uploading ? <Loader2 className="h-6 w-6 animate-spin" /> : <UploadCloud className="h-6 w-6" />}
             <span className="text-xs">آپلود تصویر (JPG, PNG, WebP - حداکثر ۵MB)</span>
             <input
+              ref={imageInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp"
               multiple
               className="hidden"
+              disabled={uploading}
               onChange={(e) => handleImageUpload(e.target.files)}
             />
           </label>
@@ -310,6 +360,35 @@ export function ProductForm({
                 </div>
               ))}
             </div>
+          )}
+        </div>
+
+        <div className="glass-panel p-5">
+          <p className="mb-3 text-sm text-white/70">ویدیوی محصول (اختیاری)</p>
+          {values.videoUrl ? (
+            <div className="relative">
+              <video src={values.videoUrl} controls className="w-full rounded-xl" />
+              <button
+                type="button"
+                onClick={() => set("videoUrl", "")}
+                className="absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-ink-950/70 text-white hover:bg-red-500/70"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-line py-8 text-white/40 transition-colors hover:border-mustard-400/40 hover:text-white/60">
+              {uploadingVideo ? <Loader2 className="h-6 w-6 animate-spin" /> : <Film className="h-6 w-6" />}
+              <span className="text-xs">آپلود ویدیو (MP4, WebM, MOV - حداکثر ۴۰MB)</span>
+              <input
+                ref={videoInputRef}
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                className="hidden"
+                disabled={uploadingVideo}
+                onChange={(e) => handleVideoUpload(e.target.files)}
+              />
+            </label>
           )}
         </div>
 

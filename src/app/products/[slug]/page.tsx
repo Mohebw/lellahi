@@ -137,6 +137,13 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
             </div>
           )}
 
+          {product.videoUrl && (
+            <div className="mt-8">
+              <h2 className="mb-2 text-base font-semibold text-white">ویدیوی محصول</h2>
+              <video src={product.videoUrl} controls className="w-full rounded-2xl bg-white/5" />
+            </div>
+          )}
+
           {product.description && (
             <div className="mt-8">
               <h2 className="mb-2 text-base font-semibold text-white">توضیحات کامل</h2>
