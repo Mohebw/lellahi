@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { Plus, Pencil, Trash2, UploadCloud, Loader2 } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { Table, THead, TBody, Th, Td } from "@/components/ui/Table";
 import { Button } from "@/components/ui/Button";
@@ -15,6 +16,7 @@ type Category = {
   id: string;
   name: string;
   icon: string | null;
+  image: string | null;
   isActive: boolean;
   order: number;
   _count: { products: number };
@@ -27,7 +29,10 @@ export default function AdminCategoriesPage() {
   const [editing, setEditing] = useState<Category | null>(null);
   const [name, setName] = useState("");
   const [icon, setIcon] = useState("");
+  const [image, setImage] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { show } = useToast();
 
   async function load() {
@@ -45,6 +50,7 @@ export default function AdminCategoriesPage() {
     setEditing(null);
     setName("");
     setIcon("");
+    setImage("");
     setModalOpen(true);
   }
 
@@ -52,7 +58,35 @@ export default function AdminCategoriesPage() {
     setEditing(cat);
     setName(cat.name);
     setIcon(cat.icon || "");
+    setImage(cat.image || "");
     setModalOpen(true);
+  }
+
+  async function handleImageUpload(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+      let data: { url?: string; error?: string } = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = { error: "پاسخ نامعتبر از سرور" };
+      }
+      if (res.ok && data.url) {
+        setImage(data.url);
+      } else {
+        show(data.error || "خطا در آپلود تصویر", "error");
+      }
+    } catch {
+      show("خطای شبکه هنگام آپلود", "error");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -63,7 +97,7 @@ export default function AdminCategoriesPage() {
       const res = await fetch(url, {
         method: editing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, icon, isActive: true, order: 0 })
+        body: JSON.stringify({ name, icon, image, isActive: true, order: 0 })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -116,7 +150,7 @@ export default function AdminCategoriesPage() {
       ) : (
         <Table>
           <THead>
-            <Th>آیکون</Th>
+            <Th>تصویر</Th>
             <Th>نام</Th>
             <Th>تعداد محصول</Th>
             <Th>وضعیت</Th>
@@ -125,7 +159,15 @@ export default function AdminCategoriesPage() {
           <TBody>
             {categories.map((cat) => (
               <tr key={cat.id}>
-                <Td className="text-xl">{cat.icon || "📱"}</Td>
+                <Td>
+                  {cat.image ? (
+                    <div className="relative h-10 w-16 overflow-hidden rounded-lg bg-white/5">
+                      <Image src={cat.image} alt="" fill className="object-cover" />
+                    </div>
+                  ) : (
+                    <span className="text-xl">{cat.icon || "📱"}</span>
+                  )}
+                </Td>
                 <Td>{cat.name}</Td>
                 <Td>{cat._count.products}</Td>
                 <Td>
@@ -154,7 +196,37 @@ export default function AdminCategoriesPage() {
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? "ویرایش دسته‌بندی" : "دسته‌بندی جدید"}>
         <form onSubmit={handleSave} className="flex flex-col gap-4">
           <Input label="نام دسته‌بندی" value={name} onChange={(e) => setName(e.target.value)} required />
-          <Input label="آیکون (اموجی، اختیاری)" value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="📱" />
+          <Input label="آیکون (اموجی، اختیاری اگر تصویر ندارید)" value={icon} onChange={(e) => setIcon(e.target.value)} placeholder="📱" />
+
+          <div>
+            <p className="mb-1.5 text-sm text-white/70">تصویر پس‌زمینه دکمه (مثلاً عکس مدل پرچمدار این برند)</p>
+            {image ? (
+              <div className="relative h-28 w-full overflow-hidden rounded-xl bg-white/5">
+                <Image src={image} alt="" fill className="object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImage("")}
+                  className="absolute top-2 left-2 rounded-full bg-ink-950/70 px-2 py-1 text-xs text-white hover:bg-red-500/70"
+                >
+                  حذف
+                </button>
+              </div>
+            ) : (
+              <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-line py-6 text-white/40 transition-colors hover:border-mustard-400/40 hover:text-white/60">
+                {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UploadCloud className="h-5 w-5" />}
+                <span className="text-xs">آپلود تصویر (اختیاری)</span>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={(e) => handleImageUpload(e.target.files)}
+                />
+              </label>
+            )}
+          </div>
+
           <Button type="submit" loading={saving} className="w-full">
             ذخیره
           </Button>

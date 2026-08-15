@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, ShieldCheck, Truck, Headphones, BadgeCheck } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { ProductCard } from "@/components/products/ProductCard";
-import { CategoryIcon } from "@/components/products/CategoryIcon";
+import { CategoryCard } from "@/components/products/CategoryCard";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { HeroVisual } from "@/components/layout/HeroVisual";
 
@@ -85,14 +85,7 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/products?category=${cat.slug}`}
-                className="glass-panel glass-panel-hover group flex flex-col items-center gap-3 px-4 py-8 text-center"
-              >
-                <CategoryIcon slug={cat.slug} />
-                <span className="text-sm font-medium text-white">{cat.name}</span>
-              </Link>
+              <CategoryCard key={cat.id} category={cat} />
             ))}
           </div>
         </section>
