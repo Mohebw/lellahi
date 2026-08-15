@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Search, Heart, Scale, ShoppingBag } from "lucide-react";
+import { Menu, X, Search, Heart, Scale, ShoppingBag, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useCartCount } from "@/lib/useCart";
@@ -103,6 +103,13 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+          <Link
+            href="/account"
+            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            aria-label="حساب کاربری"
+          >
+            <User className="h-5 w-5" />
+          </Link>
           <ThemeToggle />
         </div>
 
@@ -162,6 +169,13 @@ export default function Navbar() {
                   )}
                 </Link>
               </div>
+              <Link
+                href="/account"
+                className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-white/80 hover:bg-white/5"
+              >
+                <User className="h-4 w-4" />
+                حساب کاربری
+              </Link>
               <div className="flex items-center justify-between px-3 pt-2">
                 <span className="text-sm text-white/50">حالت نمایش</span>
                 <ThemeToggle className="rounded-lg p-2 text-white/70 hover:bg-white/5 hover:text-white" />

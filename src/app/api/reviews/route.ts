@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 const reviewSchema = z.object({
   productId: z.string().min(1),
   customerName: z.string().trim().min(2).max(60),
+  customerPhone: z.string().trim().regex(/^09\d{9}$/).optional(),
   rating: z.coerce.number().int().min(1).max(5),
   comment: z.string().trim().min(5).max(500)
 });

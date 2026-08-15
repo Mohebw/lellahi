@@ -38,6 +38,7 @@ export function ReviewSection({ productId }: { productId: string }) {
   const [average, setAverage] = useState<number | null>(null);
   const [count, setCount] = useState(0);
   const [formOpen, setFormOpen] = useState(false);
+  const [customerPhone, setCustomerPhone] = useState("");
   const [name, setName] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -56,6 +57,18 @@ export function ReviewSection({ productId }: { productId: string }) {
     load();
   }, [productId]);
 
+  // If the visitor is signed in, prefill their name/phone so the review
+  // shows up under "نظرات من" in their account page.
+  useEffect(() => {
+    fetch("/api/account/me")
+      .then((r) => r.json())
+      .then((session) => {
+        if (session?.name) setName(session.name);
+        if (session?.phone) setCustomerPhone(session.phone);
+      })
+      .catch(() => {});
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim() || !comment.trim()) return;
@@ -64,7 +77,7 @@ export function ReviewSection({ productId }: { productId: string }) {
       const res = await fetch("/api/reviews", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, customerName: name, rating, comment })
+        body: JSON.stringify({ productId, customerName: name, customerPhone: customerPhone || undefined, rating, comment })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -72,7 +85,6 @@ export function ReviewSection({ productId }: { productId: string }) {
         return;
       }
       show(data.message || "نظر شما ثبت شد", "success");
-      setName("");
       setComment("");
       setRating(5);
       setFormOpen(false);
