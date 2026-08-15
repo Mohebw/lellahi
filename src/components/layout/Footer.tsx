@@ -10,7 +10,7 @@ export default function Footer() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="mt-20 border-t border-line bg-ink-900/50">
+    <footer className="mt-20 border-t border-line bg-surface-900/50">
       <div className="container-lellahi grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="mb-3 flex items-center gap-2">

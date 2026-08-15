@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { purchaseRequestSchema } from "@/lib/validations";
 import { notifyAdminsOfPurchaseRequest } from "@/lib/telegram";
+import { generateTrackingCode } from "@/lib/utils";
 
 // Very small in-memory rate limiter (per-instance). Good enough to blunt spam bursts;
 // for multi-instance deployments swap for a Redis-backed limiter.
@@ -15,6 +16,16 @@ function isRateLimited(ip: string) {
   timestamps.push(now);
   hits.set(ip, timestamps);
   return timestamps.length > MAX_HITS;
+}
+
+async function uniqueTrackingCode() {
+  for (let i = 0; i < 8; i++) {
+    const code = generateTrackingCode();
+    const exists = await prisma.purchaseRequest.findUnique({ where: { trackingCode: code } });
+    if (!exists) return code;
+  }
+  // Astronomically unlikely fallback
+  return `LLH-${Date.now().toString(36).toUpperCase()}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -37,10 +48,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "محصول یافت نشد" }, { status: 404 });
   }
 
+  const trackingCode = await uniqueTrackingCode();
+
   // 1. Persist the request first — the customer's request must never be lost,
   //    even if the Telegram notification below fails.
   const request = await prisma.purchaseRequest.create({
     data: {
+      trackingCode,
       productId: product.id,
       customerName: parsed.data.customerName,
       customerPhone: parsed.data.customerPhone,
@@ -54,5 +68,5 @@ export async function POST(req: NextRequest) {
     await prisma.purchaseRequest.update({ where: { id: request.id }, data: { telegramSent: true } });
   }
 
-  return NextResponse.json({ id: request.id }, { status: 201 });
+  return NextResponse.json({ id: request.id, trackingCode: request.trackingCode }, { status: 201 });
 }

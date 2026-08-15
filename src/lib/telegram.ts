@@ -26,6 +26,7 @@ function buildMessage(request: PurchaseRequest, product: Product) {
     `📱 شماره: ${request.customerPhone}`,
     `📦 محصول: ${product.name}`,
     `💰 قیمت: ${formatPriceToman(product.price)}`,
+    `🏷️ کد پیگیری: ${request.trackingCode}`,
     `🕒 زمان: ${time}`,
     request.message ? `💬 پیام: ${request.message}` : null,
     "",
@@ -85,6 +86,72 @@ export async function notifyAdminsOfPurchaseRequest(
         else console.error("[telegram] sendMessage failed", chatId, await res.text());
       } catch (err) {
         console.error("[telegram] sendMessage error", chatId, err);
+      }
+    })
+  );
+
+  return anySuccess;
+}
+
+/**
+ * Sends a multi-item order notification to every configured admin chat.
+ * Never throws — Telegram failures must not affect the customer-facing flow.
+ */
+export async function notifyAdminsOfOrder(
+  order: { id: string; trackingCode: string; customerName: string; customerPhone: string; message: string | null; createdAt: Date; status: string },
+  items: { productName: string; quantity: number; priceAtOrder: number }[]
+): Promise<boolean> {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatIds = (process.env.TELEGRAM_ADMIN_CHAT_IDS || "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+
+  if (!token || chatIds.length === 0) {
+    console.warn("[telegram] TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_IDS missing — skipping order notify");
+    return false;
+  }
+
+  const total = items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0);
+  const itemLines = items
+    .map((i) => `• ${i.productName} × ${i.quantity} — ${formatPriceToman(i.priceAtOrder * i.quantity)}`)
+    .join("\n");
+
+  const time = new Intl.DateTimeFormat("fa-IR", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Tehran"
+  }).format(order.createdAt);
+
+  const text = [
+    "🛍️ *سفارش جدید (چندمحصولی)* — للهی",
+    "",
+    `👤 نام: ${order.customerName}`,
+    `📱 شماره: ${order.customerPhone}`,
+    "",
+    "📦 اقلام سفارش:",
+    itemLines,
+    "",
+    `🏷️ کد پیگیری: ${order.trackingCode}`,
+    `💰 جمع کل: ${formatPriceToman(total)}`,
+    `🕒 زمان: ${time}`,
+    order.message ? `💬 پیام: ${order.message}` : null
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  let anySuccess = false;
+  await Promise.all(
+    chatIds.map(async (chatId) => {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chat_id: chatId, text, parse_mode: "Markdown" })
+        });
+        if (res.ok) anySuccess = true;
+      } catch (err) {
+        console.error("[telegram] order sendMessage error", chatId, err);
       }
     })
   );

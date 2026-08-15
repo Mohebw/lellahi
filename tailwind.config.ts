@@ -6,7 +6,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Base surfaces — charcoal gradient, not flat black
+        // Static dark tone — used ONLY where a color must stay dark regardless of
+        // theme (e.g. text on a mustard button). Not theme-aware on purpose.
         ink: {
           950: "#0B0B0D",
           900: "#131316",
@@ -15,7 +16,19 @@ const config: Config = {
           600: "#2E2E36",
           500: "#3D3D47"
         },
-        // Signature mustard, sampled from the Lellahi logo
+        // Theme-aware page/panel background — flips between charcoal (dark theme)
+        // and cream/white (light theme) via CSS variables set in globals.css.
+        surface: {
+          950: "rgb(var(--surface-950) / <alpha-value>)",
+          900: "rgb(var(--surface-900) / <alpha-value>)",
+          800: "rgb(var(--surface-800) / <alpha-value>)",
+          700: "rgb(var(--surface-700) / <alpha-value>)"
+        },
+        // Theme-aware foreground: white text on dark theme, near-black on light theme.
+        // Overriding Tailwind's built-in "white" means every existing text-white,
+        // border-white/10, bg-white/5 usage automatically becomes theme-correct.
+        white: "rgb(var(--fg) / <alpha-value>)",
+        // Signature mustard, sampled from the Lellahi logo — same in both themes.
         mustard: {
           50: "#FEFAE8",
           100: "#FDF2C2",
@@ -26,8 +39,8 @@ const config: Config = {
           600: "#B88F00",
           700: "#8C6D00"
         },
-        line: "rgba(255,255,255,0.08)",
-        glass: "rgba(255,255,255,0.045)"
+        line: "rgb(var(--fg) / 0.1)",
+        glass: "rgb(var(--fg) / 0.05)"
       },
       fontFamily: {
         sans: ["var(--font-vazir)", "Vazirmatn", "system-ui", "sans-serif"],
@@ -36,7 +49,7 @@ const config: Config = {
       backdropBlur: { xs: "2px" },
       borderRadius: { "2xl": "1.25rem", "3xl": "1.75rem" },
       boxShadow: {
-        glass: "0 8px 32px 0 rgba(0,0,0,0.45)",
+        glass: "0 8px 32px 0 rgb(var(--shadow-tint) / 0.35)",
         "glow-mustard": "0 0 0 1px rgba(252,207,4,0.25), 0 0 24px rgba(252,207,4,0.15)"
       },
       keyframes: {

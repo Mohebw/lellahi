@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Modal } from "@/components/ui/Modal";
 import { Input, Textarea } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/Toast";
 import { purchaseRequestSchema } from "@/lib/validations";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Copy, ClipboardCheck } from "lucide-react";
 
 export function PurchaseModal({
   open,
@@ -24,7 +25,8 @@ export function PurchaseModal({
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
+  const [trackingCode, setTrackingCode] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const { show } = useToast();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -51,8 +53,9 @@ export function PurchaseModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data)
       });
+      const data = await res.json();
       if (!res.ok) throw new Error();
-      setDone(true);
+      setTrackingCode(data.trackingCode);
       show("درخواست خرید شما ثبت شد", "success");
     } catch {
       show("ثبت درخواست با خطا مواجه شد، دوباره تلاش کنید", "error");
@@ -61,10 +64,19 @@ export function PurchaseModal({
     }
   }
 
+  function handleCopy() {
+    if (!trackingCode) return;
+    navigator.clipboard?.writeText(trackingCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
   function handleClose() {
     onClose();
     setTimeout(() => {
-      setDone(false);
+      setTrackingCode(null);
+      setCopied(false);
       setName("");
       setPhone("");
       setMessage("");
@@ -72,17 +84,43 @@ export function PurchaseModal({
   }
 
   return (
-    <Modal open={open} onClose={handleClose} title={done ? undefined : "درخواست خرید"}>
-      {done ? (
-        <div className="flex flex-col items-center gap-3 py-6 text-center">
+    <Modal open={open} onClose={handleClose} title={trackingCode ? undefined : "درخواست خرید"}>
+      {trackingCode ? (
+        <div className="flex flex-col items-center gap-3 py-4 text-center">
           <CheckCircle2 className="h-12 w-12 text-emerald-400" />
           <h3 className="text-lg font-bold text-white">درخواست شما ثبت شد</h3>
           <p className="text-sm text-white/50">
             همکاران ما به‌زودی از طریق شماره‌ای که وارد کردید با شما تماس می‌گیرند.
           </p>
-          <Button onClick={handleClose} className="mt-2 w-full">
-            متوجه شدم
-          </Button>
+
+          <div className="w-full rounded-xl border border-mustard-400/30 bg-mustard-400/10 p-4">
+            <p className="mb-1 text-xs text-white/50">کد پیگیری سفارش شما</p>
+            <div className="flex items-center justify-center gap-2">
+              <span className="font-mono text-xl font-bold tracking-wider text-mustard-300" dir="ltr">
+                {trackingCode}
+              </span>
+              <button
+                type="button"
+                onClick={handleCopy}
+                aria-label="کپی کد پیگیری"
+                className="rounded-lg p-1.5 text-white/50 hover:bg-white/10 hover:text-white"
+              >
+                {copied ? <ClipboardCheck className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-white/40">
+              این کد را همراه شماره تماستان نزد خود نگه دارید تا بتوانید وضعیت سفارش را پیگیری کنید.
+            </p>
+          </div>
+
+          <div className="flex w-full gap-2">
+            <Link href="/track-order" className="btn-secondary flex-1 !py-2 text-sm">
+              پیگیری سفارش
+            </Link>
+            <Button onClick={handleClose} className="flex-1">
+              متوجه شدم
+            </Button>
+          </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

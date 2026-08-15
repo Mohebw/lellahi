@@ -5,8 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Search, Heart, Scale } from "lucide-react";
+import { Menu, X, Search, Heart, Scale, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useCartCount } from "@/lib/useCart";
 
 const LINKS = [
   { href: "/", label: "خانه" },
@@ -16,6 +18,7 @@ const LINKS = [
   { href: "/products?category=xiaomi", label: "شیائومی" },
   { href: "/products?category=jbl", label: "JBL" },
   { href: "/used-phones", label: "قیمت گوشی دست‌دوم" },
+  { href: "/track-order", label: "پیگیری سفارش" },
   { href: "/about", label: "درباره ما" },
   { href: "/contact", label: "تماس با ما" }
 ];
@@ -24,6 +27,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const cartCount = useCartCount();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -41,7 +45,7 @@ export default function Navbar() {
       className={cn(
         "sticky top-0 z-40 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-line bg-ink-950/70 backdrop-blur-xl shadow-glass"
+          ? "border-b border-line bg-surface-950/70 backdrop-blur-xl shadow-glass"
           : "bg-transparent"
       )}
     >
@@ -87,6 +91,19 @@ export default function Navbar() {
           >
             <Scale className="h-5 w-5" />
           </Link>
+          <Link
+            href="/cart"
+            className="relative rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+            aria-label="سبد خرید"
+          >
+            <ShoppingBag className="h-5 w-5" />
+            {cartCount > 0 && (
+              <span className="absolute -top-0.5 -left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-mustard-400 text-[10px] font-bold text-ink-950">
+                {cartCount > 9 ? "9+" : cartCount}
+              </span>
+            )}
+          </Link>
+          <ThemeToggle />
         </div>
 
         <button
@@ -105,7 +122,7 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="overflow-hidden border-t border-line bg-ink-950/95 backdrop-blur-xl lg:hidden"
+            className="overflow-hidden border-t border-line bg-surface-950/95 backdrop-blur-xl lg:hidden"
           >
             <nav className="container-lellahi flex flex-col gap-1 py-3">
               {LINKS.map((link) => (
@@ -117,6 +134,38 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <div className="mt-2 flex items-center gap-2 border-t border-line px-3 pt-3">
+                <Link
+                  href="/wishlist"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/5 py-2.5 text-xs text-white/70"
+                >
+                  <Heart className="h-4 w-4" />
+                  علاقه‌مندی‌ها
+                </Link>
+                <Link
+                  href="/compare"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/5 py-2.5 text-xs text-white/70"
+                >
+                  <Scale className="h-4 w-4" />
+                  مقایسه
+                </Link>
+                <Link
+                  href="/cart"
+                  className="relative flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-white/5 py-2.5 text-xs text-white/70"
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  سبد خرید
+                  {cartCount > 0 && (
+                    <span className="absolute top-1 left-6 flex h-4 w-4 items-center justify-center rounded-full bg-mustard-400 text-[9px] font-bold text-ink-950">
+                      {cartCount > 9 ? "9+" : cartCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
+              <div className="flex items-center justify-between px-3 pt-2">
+                <span className="text-sm text-white/50">حالت نمایش</span>
+                <ThemeToggle className="rounded-lg p-2 text-white/70 hover:bg-white/5 hover:text-white" />
+              </div>
             </nav>
           </motion.div>
         )}

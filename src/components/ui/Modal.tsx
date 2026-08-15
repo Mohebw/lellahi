@@ -37,7 +37,7 @@ export function Modal({ open, onClose, title, children }: ModalProps) {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="absolute inset-0 bg-ink-950/80 backdrop-blur-sm"
+            className="absolute inset-0 bg-surface-950/80 backdrop-blur-sm"
             onClick={onClose}
             aria-hidden
           />

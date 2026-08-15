@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/Card";
 import { WishlistButton } from "./WishlistButton";
 import { CompareButton } from "./CompareButton";
+import { AddToCartButton } from "./AddToCartButton";
 import { formatToman } from "@/lib/utils";
 
 export type ProductCardData = {
@@ -54,6 +55,7 @@ export function ProductCard({ product }: { product: ProductCardData }) {
         <div className="absolute top-2 left-2 flex flex-col gap-1.5">
           <WishlistButton productId={product.id} />
           <CompareButton productId={product.id} />
+          <AddToCartButton productId={product.id} outOfStock={outOfStock} />
         </div>
       </div>
       <p className="text-xs text-white/40">{product.brand}</p>

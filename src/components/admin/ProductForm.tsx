@@ -353,7 +353,7 @@ export function ProductForm({
                   <button
                     type="button"
                     onClick={() => set("images", values.images.filter((_, idx) => idx !== i))}
-                    className="absolute inset-0 flex items-center justify-center bg-ink-950/60 opacity-0 transition-opacity group-hover:opacity-100"
+                    className="absolute inset-0 flex items-center justify-center bg-surface-950/60 opacity-0 transition-opacity group-hover:opacity-100"
                   >
                     <X className="h-4 w-4 text-white" />
                   </button>
@@ -371,7 +371,7 @@ export function ProductForm({
               <button
                 type="button"
                 onClick={() => set("videoUrl", "")}
-                className="absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-ink-950/70 text-white hover:bg-red-500/70"
+                className="absolute top-2 left-2 flex h-8 w-8 items-center justify-center rounded-full bg-surface-950/70 text-white hover:bg-red-500/70"
               >
                 <X className="h-4 w-4" />
               </button>

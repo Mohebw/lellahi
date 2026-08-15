@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/Card";
 import { ProductGallery } from "@/components/products/ProductGallery";
 import { PurchaseCTA } from "@/components/products/PurchaseCTA";
+import { AddToCartButton } from "@/components/products/AddToCartButton";
 import { WishlistButton } from "@/components/products/WishlistButton";
 import { CompareButton } from "@/components/products/CompareButton";
 import { StockAlertForm } from "@/components/products/StockAlertForm";
@@ -121,7 +122,10 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
           )}
 
           {product.stock > 0 ? (
-            <PurchaseCTA productId={product.id} productName={product.name} outOfStock={false} />
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <PurchaseCTA productId={product.id} productName={product.name} outOfStock={false} />
+              <AddToCartButton productId={product.id} variant="full" />
+            </div>
           ) : (
             <StockAlertForm productId={product.id} />
           )}

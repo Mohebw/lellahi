@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+export const trackOrderSchema = z.object({
+  trackingCode: z.string().trim().min(3).max(20),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^09\d{9}$/, "شماره تماس معتبر نیست")
+});
+
 export const purchaseRequestSchema = z.object({
   productId: z.string().min(1),
   customerName: z.string().trim().min(2, "نام باید حداقل ۲ حرف باشد").max(80),

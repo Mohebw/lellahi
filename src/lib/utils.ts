@@ -19,6 +19,12 @@ export function slugify(input: string) {
   return slugifyLib(input, { lower: true, strict: true, trim: true });
 }
 
+export function generateTrackingCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous 0/O/1/I
+  let code = "";
+  for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return `LLH-${code}`;
+}
 export function relativeTimeFa(date: Date) {
   const diffMs = Date.now() - new Date(date).getTime();
   const mins = Math.floor(diffMs / 60000);

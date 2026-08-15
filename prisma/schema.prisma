@@ -65,6 +65,7 @@ model Product {
   purchaseRequests PurchaseRequest[]
   reviews         Review[]
   stockAlerts     StockAlert[]
+  orderItems      OrderItem[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -78,6 +79,41 @@ model ProductImage {
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   url       String
   order     Int     @default(0)
+}
+
+enum OrderStatus {
+  NEW
+  IN_PROGRESS
+  CONTACTED
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  trackingCode  String      @unique
+  customerName  String
+  customerPhone String
+  message       String?
+  status        OrderStatus @default(NEW)
+  telegramSent  Boolean     @default(false)
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([status])
+}
+
+model OrderItem {
+  id            String  @id @default(cuid())
+  orderId       String
+  order         Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product @relation(fields: [productId], references: [id])
+  quantity      Int     @default(1)
+  priceAtOrder  Int // snapshot of unit price at the moment of ordering
+
+  @@index([orderId])
 }
 
 enum PurchaseRequestStatus {
@@ -189,6 +225,7 @@ model UsedPhoneBatterySetting {
 
 model PurchaseRequest {
   id            String                 @id @default(cuid())
+  trackingCode  String                 @unique
   productId     String
   product       Product                @relation(fields: [productId], references: [id])
   customerName  String

@@ -18,7 +18,7 @@ export function WishlistButton({ productId, className }: { productId: string; cl
       }}
       aria-label={active ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full border border-line bg-ink-950/60 backdrop-blur-md transition-colors hover:border-mustard-400/40",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface-950/60 backdrop-blur-md transition-colors hover:border-mustard-400/40",
         className
       )}
     >

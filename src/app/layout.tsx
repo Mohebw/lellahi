@@ -38,6 +38,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl" className={`${vazir.variable} ${mono.variable}`}>
+      <head>
+        <script
+          // Runs before paint so the saved theme applies with no flash of the wrong theme.
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('lellahi_theme')==='light'){document.documentElement.classList.add('light')}}catch(e){}`
+          }}
+        />
+      </head>
       <body className="min-h-screen flex flex-col font-sans">
         <ToastProvider>
           <Navbar />

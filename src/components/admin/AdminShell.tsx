@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Package, Tags, ClipboardList, LogOut, Menu, X, Smartphone, MessageSquare } from "lucide-react";
+import { LayoutDashboard, Package, Tags, ClipboardList, LogOut, Menu, X, Smartphone, MessageSquare, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +11,7 @@ const NAV = [
   { href: "/admin", label: "داشبورد", icon: LayoutDashboard, exact: true },
   { href: "/admin/products", label: "محصولات", icon: Package },
   { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: Tags },
+  { href: "/admin/orders", label: "سفارش‌های سبد خرید", icon: ShoppingBag },
   { href: "/admin/requests", label: "درخواست‌های خرید", icon: ClipboardList },
   { href: "/admin/reviews", label: "نظرات مشتریان", icon: MessageSquare },
   { href: "/admin/used-phones", label: "قیمت گوشی دست‌دوم", icon: Smartphone }
@@ -72,7 +73,7 @@ export function AdminShell({
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-64 shrink-0 flex-col border-l border-line bg-ink-900/60 p-4 backdrop-blur-xl lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-l border-line bg-surface-900/60 p-4 backdrop-blur-xl lg:flex">
         {SidebarContent}
       </aside>
 
@@ -84,7 +85,7 @@ export function AdminShell({
           </button>
         </header>
         {mobileOpen && (
-          <div className="flex flex-col border-b border-line bg-ink-900/95 p-4 lg:hidden">
+          <div className="flex flex-col border-b border-line bg-surface-900/95 p-4 lg:hidden">
             {SidebarContent}
           </div>
         )}

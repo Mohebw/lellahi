@@ -24,7 +24,7 @@ export function CompareButton({ productId, className }: { productId: string; cla
       }}
       aria-label={active ? "حذف از مقایسه" : "افزودن به مقایسه"}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-full border border-line bg-ink-950/60 backdrop-blur-md transition-colors hover:border-mustard-400/40",
+        "flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface-950/60 backdrop-blur-md transition-colors hover:border-mustard-400/40",
         className
       )}
     >
