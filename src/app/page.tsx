@@ -5,6 +5,7 @@ import { ProductCard } from "@/components/products/ProductCard";
 import { CategoryCard } from "@/components/products/CategoryCard";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { HeroVisual } from "@/components/layout/HeroVisual";
+import { HeroBannerSlider } from "@/components/layout/HeroBannerSlider";
 
 export const revalidate = 60;
 
@@ -30,6 +31,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <HeroBannerSlider />
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="container-lellahi grid items-center gap-10 py-16 lg:grid-cols-2 lg:py-28">
