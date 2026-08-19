@@ -6,6 +6,9 @@ import { CategoryCard } from "@/components/products/CategoryCard";
 import { MagneticLink } from "@/components/ui/MagneticLink";
 import { HeroVisual } from "@/components/layout/HeroVisual";
 import { HeroBannerSlider } from "@/components/layout/HeroBannerSlider";
+import { PromoTilesSection } from "@/components/layout/PromoTilesSection";
+import { FlashSaleSection } from "@/components/products/FlashSaleSection";
+import { BestsellersRow } from "@/components/products/BestsellersRow";
 
 export const revalidate = 60;
 
@@ -32,6 +35,7 @@ export default async function HomePage() {
   return (
     <>
       <HeroBannerSlider />
+      <PromoTilesSection />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -93,6 +97,12 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Flash sale */}
+      <FlashSaleSection />
+
+      {/* Bestsellers */}
+      <BestsellersRow />
 
       {/* Featured products */}
       <section className="container-lellahi pb-20">

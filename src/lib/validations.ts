@@ -38,6 +38,7 @@ export const productSchema = z.object({
   colors: z.array(z.string()).optional(),
   badge: z.enum(["NONE", "NEW", "FEATURED", "DISCOUNT", "OUT_OF_STOCK"]).default("NONE"),
   videoUrl: z.string().trim().optional().or(z.literal("")),
+  isFlashSale: z.coerce.boolean().default(false),
   images: z.array(z.string()).optional()
 });
 

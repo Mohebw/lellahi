@@ -5,9 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, Search, Heart, Scale, ShoppingBag, User } from "lucide-react";
+import { Menu, X, Heart, Scale, ShoppingBag, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LiveSearch } from "./LiveSearch";
 import { useCartCount } from "@/lib/useCart";
 
 const LINKS = [
@@ -70,13 +71,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Link
-            href="/products"
-            className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"
-            aria-label="جستجو"
-          >
-            <Search className="h-5 w-5" />
-          </Link>
+          <LiveSearch />
           <Link
             href="/wishlist"
             className="rounded-lg p-2 text-white/70 transition-colors hover:bg-white/5 hover:text-white"

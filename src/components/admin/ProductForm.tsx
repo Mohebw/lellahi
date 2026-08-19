@@ -52,6 +52,7 @@ export type ProductFormValues = {
   badge: "NONE" | "NEW" | "FEATURED" | "DISCOUNT" | "OUT_OF_STOCK";
   images: string[];
   videoUrl: string;
+  isFlashSale: boolean;
 };
 
 const EMPTY: ProductFormValues = {
@@ -69,7 +70,8 @@ const EMPTY: ProductFormValues = {
   colors: [],
   badge: "NONE",
   images: [],
-  videoUrl: ""
+  videoUrl: "",
+  isFlashSale: false
 };
 
 export function ProductForm({
@@ -399,6 +401,16 @@ export function ProductForm({
             checked={values.isActive}
             onChange={(e) => set("isActive", e.target.checked)}
             className="h-5 w-5 accent-mustard-400"
+          />
+        </div>
+
+        <div className="glass-panel flex items-center justify-between p-5">
+          <span className="text-sm text-white/70">پیشنهاد شگفت‌انگیز</span>
+          <input
+            type="checkbox"
+            checked={values.isFlashSale}
+            onChange={(e) => set("isFlashSale", e.target.checked)}
+            className="h-5 w-5 accent-red-400"
           />
         </div>
 

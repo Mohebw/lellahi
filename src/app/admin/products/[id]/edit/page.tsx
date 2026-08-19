@@ -32,7 +32,8 @@ export default async function EditProductPage({ params }: { params: { id: string
           colors: product.colors,
           badge: product.badge,
           images: product.images.map((i) => i.url),
-          videoUrl: product.videoUrl || ""
+          videoUrl: product.videoUrl || "",
+          isFlashSale: product.isFlashSale
         }}
       />
     </AdminShell>
